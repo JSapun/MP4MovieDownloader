@@ -1,0 +1,4 @@
+cx_Freeze==7.1.1
+Requests==2.32.3
+selenium==4.22.0
+selenium_wire==5.1.0
