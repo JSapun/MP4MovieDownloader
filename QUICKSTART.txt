@@ -6,3 +6,24 @@ The --file flag lets you input a text file with movie names per line to save mul
 
 
 ** Please make sure the movie name is correct **
+** If the movie name contains any special characters (including apostrophe), please replace with space **
+** Shows are not supported at this time **
+
+
+
+ffmpeg.exe -protocol_whitelist file,http,https,tcp,tls,crypto -i master.m3u8 -c copy -bsf:a aac_adtstoasc example.mp4
+
+ffmpeg.exe -protocol_whitelist file,http,https,tcp,tls,crypto -i master.m3u8 -c copy -bsf:a aac_adtstoasc -map m:variant_bitrate:4500000 example.mp4
+
+
+https://ww4.fmovies.co/sitemap.xml
+
+
+features to add:
+    basic use (input), advanced options (res,)
+    download best quality 1080 for 1st master.m3u8 -- DONE
+    debug mode print time stamps --> DONE
+    download movies, and shows --> use sitemap -- DONE
+    failsafe for when ffmpeg fails, try to capture and print statement -- DONE
+
+pipreqs m3...
