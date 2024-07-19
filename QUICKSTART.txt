@@ -5,4 +5,13 @@ m3u8Downloader.exe (--file | --movie) [--out]
 The --file flag lets you input a text file with movie names per line to save multiple movies. Note that the --file or --movie flag is mandatory. The --movie flag lets you save a single movie. If the name contains more than 1 word, you will need to surround the name in quotes. The --out flag is optional and lets you specify a directory to save the mp4 files to. Default is "./Output". The directory can be absolute or local.
 
 
-** Please make sure the movie name is correct **
+** Please make sure the movie name is correct. If the movie name contains any special characters (including apostrophe),
+please replace with space. Captions are not supported at this time **
+
+
+
+
+
+
+new feature:
+    caption argument
