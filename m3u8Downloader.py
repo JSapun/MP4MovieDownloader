@@ -374,6 +374,9 @@ class m3u8Downloader(object):
 					os.makedirs(new_path_dir) # Create sub-directory for season
 					for k in range(len(index)):
 						response = requests.get(index[k])
+						if "404 Not Found" in response.content.decode('utf-8'):
+							log.error("Invalid resolution, try inputting a lower value: "+name)
+							break
 						out_dir = Path(str(os.path.join(new_path_dir, name)+"-ep"+str(k+1)+'.m3u8'))
 						open(out_dir, "wb").write(response.content)
 						b += int(out_dir.stat().st_size)
@@ -381,6 +384,9 @@ class m3u8Downloader(object):
 					updated_name_list.append(temp_list)
 				else:
 					response = requests.get(index)
+					if "404 Not Found" in response.content.decode('utf-8'):
+						log.error("Invalid resolution, try inputting a lower value: "+name)
+						continue
 					out_dir = Path(str(os.path.join(dir, name)+'.m3u8'))
 					open(out_dir, "wb").write(response.content)
 					b += int(out_dir.stat().st_size)
@@ -418,7 +424,7 @@ class m3u8Downloader(object):
 			log.error("Failed to convert: " + name)
 			log.debug("HTTP error 403 Forbidden --> bad m3u8 link, check site network")
 		except FFMPEGInvalidInput:
-			log.error("Failed to convert: " + name)
+			log.error("Failed to convert: " + name)#+". Possible causes: invalid resolution input, incorrect stream parsing")
 			log.debug("Bad m3u8 link --> check network site, caused by different m3u8 streaming methods (index.ts)")
 		except subprocess.CalledProcessError:
 			log.error("Could not convert: " + name)
@@ -427,7 +433,11 @@ class m3u8Downloader(object):
 		except Exception as e:
 			log.debug(e)
 			log.error("Unexpected error when converting m3u8 files")
+
 	def convert_to_mp4(self, name_list, dir):
+		if len(name_list) == 0:
+			log.error("No films to convert")
+			exit(1)
 		for x in name_list:
 			if isinstance(x, list):  # show
 				for y in x[1:]:
@@ -452,7 +462,7 @@ if __name__ == '__main__':
 		parser.add_argument('-r', '--res', type=str, help='video resolution (360, 720, or 1080)', default="1080",
 					  required=False)
 		parser.add_argument('-y', '--year', type=str, help='year of film', required=False)
-		parser.set_defaults(debug=True)  # Change to True to see more print statements
+		parser.set_defaults(debug=False)  # Change to True to see more print statements
 		args = parser.parse_args()
 
 		if not args.update and not (args.txt or args.film):
@@ -547,9 +557,11 @@ if __name__ == '__main__':
 		if args.debug:
 			print(traceback.format_exc())
 		else:
-			print("Error during execution, please download the most up to date script.")
+			print(colored("Error during execution, please download the most up to date script.", 'red'))
 		exit(1)
 
 
 # python .\m3u8Downloader.py --File "movies.txt"
+
+# python setup.py build
 
