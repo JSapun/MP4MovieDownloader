@@ -6,7 +6,7 @@ m3u8Downloader.exe [-t TXT | -f FILM] [-u] [-o OUT] [-r RES] [-y YEAR]
 The --txt flag lets you input a text file with film names per line to save multiple films. Note that the --file or --movie flag is mandatory.
 The --film flag lets you save a single film. If the name contains more than 1 word, you will need to surround the name in quotes.
 The --out flag is optional and lets you specify a directory to save the mp4 files to. Default is "./Output". The directory can be absolute or local.
-The --res flag lets you set the desired resolution, either 360, 720, or 1080. Note some old films don't have 1080p.
+The --res flag lets you set the desired resolution, either 360, 720, or 1080. Note some old films don't have 1080p so default is 720p.
 The --year flag lets you specify a movie production date in case there are 2 films with the same name.
 The --update flag lets you update the movie registry with more modern films.
 
@@ -15,5 +15,18 @@ The --update flag lets you update the movie registry with more modern films.
 please replace with space. Captions are not supported at this time **
 
 
+For text file formatting, one film is listed per line. If the film is a show, please specify include the word season and season number after the film
+title. To specify the year, enter the film name followed by a comma followed by the year. Currently, text file input does not support resolution input.
+
+
+Notes:
+    * Due to network errors, some films can only be saved in 720p even if 1080p is offered.
+    * Due to more network errors, it's possible some films will fail to save, try again at a later time.
+    * This program does not work on MAC or linux! (you can try running this program using WINE)
+
 Upcoming features:
     * Caption flag
+    * Executable for MAC
+    * Resolution input for text files
+
+# line 1342 in threading.py
