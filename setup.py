@@ -1,6 +1,10 @@
 import sys
 from cx_Freeze import setup, Executable
 
+"""
+Created by: https://github.com/JSapun/. This code is released under the MIT license. 
+"""
+
 setup(
     name = "MovieDownloader",
     version = "1.0",

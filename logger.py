@@ -2,6 +2,10 @@
 import time
 from termcolor import colored
 
+"""
+Created by: https://github.com/JSapun/. This code is released under the MIT license. 
+"""
+
 class Logger(object):
 	def __init__(self, debugger=False):
 		self.debugger = debugger

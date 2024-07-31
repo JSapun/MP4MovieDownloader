@@ -10,6 +10,7 @@ import requests
 from cryptography.fernet import Fernet
 import os
 import traceback
+from termcolor import colored
 
 import sys
 import time
@@ -23,6 +24,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+
+"""
+Created by: https://github.com/JSapun/ to download m3u8 links and convert them to mp4 format. 
+This code is released under the MIT license. 
+"""
 
 class HttpError403(Exception):
 	pass
@@ -110,13 +116,17 @@ class m3u8Finder(object):
 				return master_list[index].url.replace("master", res), res, 1
 			elif sum([0 if x == 'video/mp2t' else 1 for x in
 				    sub_content_type[-5:]]) == 0:  # Way 2 or 3 --> master.m3u8 --> .ts
-				if "/index.m3u8" in master_list[index].url:  # way 2, for simplicity, only 720
+				if "/index.m3u8" in master_list[index].url:  # way 2, for simplicity, only 720, No longer working, all named master.m3u8
 					log.debug("Found m3u8 -- way 2 (index.m3u8 .ts)")
 					return master_list[index].url, "720", 2
 				else:  # way 3
 					log.debug("Found m3u8 -- way 3 (master.m3u8 .ts)")
 					return master_list[index].url, "720", 3  # this method only supports 720
+			elif len(sub_content_type) < 5:
+				log.debug("Found m3u8 but the weird way??")
+				return master_list[index].url, "720", 3
 			else:
+				log.debug(sub_content_type[-5:])
 				log.debug("RIP --> could not figure out m3u8 method")
 				log.debug(index)
 				log.debug(master_list[index])
@@ -279,8 +289,6 @@ class m3u8Downloader(object):
 		This function tries to find the m3u8 links. Note, for shows, we will need to retrieve links for all episodes
 		in a season. Returning a list of (list of strings/strings).
 		"""
-		if res is None:
-			res = "1080"
 		try:
 			m3u8_out = []
 			name_list = []
@@ -338,6 +346,9 @@ class m3u8Downloader(object):
 				raise NoMoviesSaved
 			else:
 				return m3u8_out, name_list, res_list # return a list of lists/str,
+		except KeyboardInterrupt:
+			print(colored("You pressed Ctrl+C, goodbye!", 'yellow'))
+			exit(1)
 		except NoMoviesSaved:
 			log.error("No movies could be saved")
 			exit(1)
@@ -394,6 +405,9 @@ class m3u8Downloader(object):
 			if len(os.listdir(dir)) == 0:
 				raise EmptyDirectory
 			return updated_name_list, b
+		except KeyboardInterrupt:
+			print(colored("You pressed Ctrl+C, goodbye!", 'yellow'))
+			exit(1)
 		except EmptyDirectory:
 			log.error("Could not download any m3u8 links")
 			exit(1)
@@ -419,7 +433,9 @@ class m3u8Downloader(object):
 				raise FFMPEGInvalidInput
 			os.rename(new_file, str(os.path.join(dir, name) + '.mp4'))
 			log.print("\tConverted: " + name + ".mp4")
-
+		except KeyboardInterrupt:
+			print(colored("You pressed Ctrl+C, goodbye!", 'yellow'))
+			exit(1)
 		except HttpError403:
 			log.error("Failed to convert: " + name)
 			log.debug("HTTP error 403 Forbidden --> bad m3u8 link, check site network")
@@ -448,10 +464,9 @@ class m3u8Downloader(object):
 
 
 
-
 if __name__ == '__main__':
 	if len(sys.argv) > 1:
-		parser = argparse.ArgumentParser(description='M3U8-->MP4 Movie Scraper')
+		parser = argparse.ArgumentParser(description='M3U8-->MP4 Movie Downloader')
 		group1 = parser.add_mutually_exclusive_group(required=False)
 		group1.add_argument('-t', '--txt', type=str, help='path to txt file of all desired movie names by line')
 		group1.add_argument('-f', '--film', type=str, help='film name in quotes (movie or show)')
@@ -459,7 +474,7 @@ if __name__ == '__main__':
 					  required=False)
 		parser.add_argument('-o', '--out', type=str, help='path to output directory for mp4', default="Output",
 					  required=False)
-		parser.add_argument('-r', '--res', type=str, help='video resolution (360, 720, or 1080)', default="1080",
+		parser.add_argument('-r', '--res', type=str, help='video resolution (360, 720, or 1080)', default="720",
 					  required=False)
 		parser.add_argument('-y', '--year', type=str, help='year of film', required=False)
 		parser.set_defaults(debug=False)  # Change to True to see more print statements
@@ -469,7 +484,7 @@ if __name__ == '__main__':
 			parser.error("-u or --txt or --film is required")
 			exit(1)
 	else:
-		print("Error: no arguments passed")
+		print(colored("Error: no arguments passed",'red'))
 		""" GUI -->
 		print("Welcome to the M3U8-->MP4 Movie Scraper")
 		show_bool = input("Do you want to download a tv-show? (y/n)")
@@ -553,6 +568,11 @@ if __name__ == '__main__':
 
 		log.print("Done!")
 		exit(0)
+
+	except KeyboardInterrupt:
+		print(colored("You pressed Ctrl+C, goodbye!", 'yellow'))
+		exit(1)
+
 	except Exception as e:
 		if args.debug:
 			print(traceback.format_exc())

@@ -12,6 +12,10 @@ from bs4 import GuessedAtParserWarning
 import warnings
 warnings.filterwarnings('ignore')
 
+"""
+Created by: https://github.com/JSapun/. This code is released under the MIT license. 
+"""
+
 exclusion_list = ["https://ww4.fmovies.co/film/24-season-9-live-another-day-9296/",
 			"https://ww4.fmovies.co/film/the-man-in-the-high-castle-4-100150-c/"] # Weird url formats, just ignore
 base = "https://ww4.fmovies.co/sitemap.xml"
